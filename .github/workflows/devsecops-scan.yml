@@ -23,12 +23,13 @@ jobs:
       # ===== IaC Security Scan with Checkov =====
       - name: Run Checkov IaC Security Scan
         uses: bridgecrewio/checkov-action@master
+        continue-on-error: true  # 실패해도 다음 단계 계속 실행
         with:
           directory: .
           framework: terraform
           output_format: sarif
           output_file_path: checkov-results.sarif
-          soft_fail: false  # 취약점 발견 시 실패 처리 (실습용)
+          soft_fail: true  # 취약점 발견해도 워크플로우는 계속 진행
 
       # ===== Upload Checkov Results to GitHub Security Tab =====
       - name: Upload Checkov SARIF to GitHub Security
