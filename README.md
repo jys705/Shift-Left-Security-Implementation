@@ -1,6 +1,4 @@
-# DevSecOps Lab: Shift-Left Security Implementation
-
-> **Checkov + CodeQL 통합 보안 파이프라인**  
+# Shift-Left Security Implementation
 > 인프라(IaC)와 애플리케이션 보안을 단일 플랫폼에서 통합 관리하는 DevSecOps 아키텍처 구현
 
 ---
