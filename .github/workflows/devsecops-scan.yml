@@ -43,7 +43,6 @@ jobs:
   # ===================================================================
   # Job 2: Application Security Scan (CodeQL)
   # Job 1과 독립적으로 병렬 실행됨
-  # 취약점 발견 시 이 Job도 실패 처리하여 배포 차단
   # ===================================================================
   app-security:
     runs-on: ubuntu-latest
@@ -59,25 +58,9 @@ jobs:
           languages: python
 
       - name: Perform CodeQL Analysis
-        id: codeql-analysis
-        continue-on-error: true  # 분석은 완료하되, 결과는 다음 단계에서 체크
         uses: github/codeql-action/analyze@v3
         with:
           category: codeql-python
-
-      - name: Verify CodeQL Results
-        run: |
-          echo "=========================================="
-          echo "  CodeQL Analysis Completed"
-          echo "=========================================="
-          # CodeQL은 기본적으로 실패를 반환하지 않으므로
-          # 취약점이 있다면 이 Job도 실패로 처리
-          # Security 탭에서 결과 확인 가능
-          if [ "${{ steps.codeql-analysis.outcome }}" != "success" ]; then
-            echo "❌ CodeQL found vulnerabilities"
-            exit 1
-          fi
-          echo "✓ CodeQL scan completed"
 
   # ===================================================================
   # Job 3: Security Summary Report
@@ -101,50 +84,3 @@ jobs:
           echo ""
           echo "⚠️  Check Security tab for vulnerabilities"
           echo "========================================"
-
-  # ===================================================================
-  # Job 4: Deployment Gate (배포 차단 게이트)
-  # 보안 스캔이 모두 성공해야만 이 단계가 실행됨
-  # 현재는 실제 배포 없이 구조만 표시 (주석 처리)
-  # ===================================================================
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   name: Deploy to Production
-  #   needs: [iac-security, app-security]  # 두 보안 스캔 모두 성공 필요
-  #   if: success()  # 이전 Job들이 모두 성공해야만 실행
-  #   
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     
-  #     # === 실제 배포 시 활성화할 단계들 ===
-  #     # - name: Configure AWS Credentials
-  #     #   uses: aws-actions/configure-aws-credentials@v4
-  #     #   with:
-  #     #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #     #     aws-region: ap-northeast-2
-  #     #
-  #     # - name: Setup Terraform
-  #     #   uses: hashicorp/setup-terraform@v3
-  #     #
-  #     # - name: Terraform Init
-  #     #   run: terraform init
-  #     #
-  #     # - name: Terraform Plan
-  #     #   run: terraform plan -out=tfplan
-  #     #
-  #     # - name: Terraform Apply
-  #     #   run: terraform apply -auto-approve tfplan
-  #     
-  #     - name: Deployment Blocked
-  #       run: |
-  #         echo "=========================================="
-  #         echo "  🚫 Deployment Step"
-  #         echo "=========================================="
-  #         echo "This step would deploy to production"
-  #         echo "Currently disabled (commented out)"
-  #         echo ""
-  #         echo "✓ Security scans passed"
-  #         echo "✓ Safe to deploy (if enabled)"
-  #         echo "=========================================="

@@ -145,11 +145,11 @@ CodeQL     → 별도 대시보드 → 수동 확인
 
 ---
 
-## 🧪 데모용 취약 코드
+## 🧪 데모용 취약 코드 샘플
 
-### Infrastructure (main.tf)
+### Infrastructure (sample_vulnerable.tf)
 ```terraform
-# 의도적 취약점 10개 포함
+# 의도적 취약점 10개 포함 (교육 목적)
 resource "aws_s3_bucket" "insecure_bucket" {
   bucket = "my-devsecops-project-bucket-2026"
   # ❌ 암호화 미설정
@@ -168,9 +168,9 @@ resource "aws_security_group" "insecure_sg" {
 }
 ```
 
-### Application (app.py)
+### Application (sample_vulnerable_app.py)
 ```python
-# 의도적 취약점 8개 포함
+# 의도적 취약점 8개 포함 (교육 목적)
 SECRET_KEY = "hardcoded-secret-key-123456"  # ❌ 하드코딩된 시크릿
 
 @app.route('/user')
@@ -184,6 +184,8 @@ def ping_server():
     host = request.args.get('host')
     os.system(f"ping -c 1 {host}")  # ❌ Command Injection
 ```
+
+> ⚠️ **주의**: 이 파일들은 보안 스캔 데모를 위한 샘플 코드이며, 실제 프로덕션 환경에서 절대 사용하지 마십시오.
 
 ---
 
